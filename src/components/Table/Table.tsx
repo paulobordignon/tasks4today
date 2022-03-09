@@ -1,3 +1,4 @@
+import Checkbox from '@mui/material/Checkbox';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -5,12 +6,25 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { memo, useState, useEffect } from 'react';
+import { memo, useCallback, useState, useEffect } from 'react';
 
 import api from '../../services/api';
 
+import { T4Button } from '..';
+
 export const T4Table: React.FC = memo(() => {
   const [rows, setRows] = useState([{ id: 1, description: 'Carregando...' }]);
+  const [done, setDone] = useState(0);
+
+  const deleteTask = useCallback(
+    id => {
+      api
+        .delete(`/tasks/${id}`)
+        .then(() => setDone(done + 1))
+        .catch(() => console.log('erro'));
+    },
+    [done]
+  );
 
   useEffect(() => {
     api
@@ -21,7 +35,7 @@ export const T4Table: React.FC = memo(() => {
       .catch(() => {
         setRows([{ id: 1, description: 'Erro ao carregar dados' }]);
       });
-  }, []);
+  }, [done]);
 
   return (
     <div>
@@ -42,11 +56,13 @@ export const T4Table: React.FC = memo(() => {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  DONE
+                  <Checkbox onChange={() => deleteTask(row.id)} />
                 </TableCell>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.description}</TableCell>
-                <TableCell>EDIT</TableCell>
+                <TableCell>
+                  <T4Button text="EDIT" onClick={() => {}} />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
