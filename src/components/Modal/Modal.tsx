@@ -1,52 +1,88 @@
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 import { T4Button, T4TextField } from '..';
 
 import api from '../../services/api';
+import { style } from './styles';
 import { ModalProps } from './types';
 
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-};
+export const T4Modal: React.FC<ModalProps> = memo(
+  ({ open, onClose, idEdit, descriptionEdit }: ModalProps) => {
+    const {
+      handleSubmit,
+      control,
+      formState: { errors },
+      reset,
+    } = useForm();
+    const [defaultValue, setDefaultValue] = useState('');
 
-export const T4Modal: React.FC<ModalProps> = memo(props => {
-  const postTask = useCallback(() => {
-    api
-      .post('/tasks', { description: 'testeeeee' })
-      .then(() => console.log('ok'))
-      .catch(() => console.log('erro'));
-  }, []);
+    const postTask = useCallback(
+      data => {
+        api
+          .post('/tasks', data)
+          .then(() => onClose())
+          .catch(() => console.log('erro'));
+      },
+      [open]
+    );
 
-  return (
-    <Modal
-      open={props.open}
-      onClose={props.onClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <T4TextField />
-        <T4Button
-          onClick={() => {
-            postTask();
-            props.onClose();
-          }}
-          text="ADD"
-        />
-      </Box>
-    </Modal>
-  );
-});
+    const putTask = useCallback(
+      data => {
+        console.log(data, idEdit);
+        api
+          .put(`/tasks/${idEdit}`, data)
+          .then(() => onClose())
+          .catch(() => console.log('erro'));
+      },
+      [open]
+    );
+
+    useEffect(() => {
+      reset();
+      if (descriptionEdit) {
+        setDefaultValue(descriptionEdit);
+      } else {
+        setDefaultValue('');
+      }
+    }, [open]);
+
+    return (
+      <Modal open={open} onClose={onClose}>
+        <Box sx={style}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Controller
+              name="description"
+              control={control}
+              rules={{ required: true }}
+              defaultValue={defaultValue}
+              render={({ field: { onChange, value } }) => (
+                <T4TextField
+                  label="Description"
+                  onChange={onChange}
+                  value={value}
+                />
+              )}
+            />
+            {descriptionEdit ? (
+              <T4Button onClick={handleSubmit(putTask)} text="EDIT" />
+            ) : (
+              <T4Button onClick={handleSubmit(postTask)} text="ADD" />
+            )}
+          </div>
+          <div style={{ marginTop: '10px', color: 'red' }}>
+            {errors.description && 'Description is required'}
+          </div>
+        </Box>
+      </Modal>
+    );
+  }
+);

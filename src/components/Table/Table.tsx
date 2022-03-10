@@ -12,62 +12,73 @@ import api from '../../services/api';
 
 import { T4Button } from '..';
 
-export const T4Table: React.FC = memo(() => {
-  const [rows, setRows] = useState([{ id: 1, description: 'Carregando...' }]);
-  const [done, setDone] = useState(0);
+import { TableProps } from './types';
 
-  const deleteTask = useCallback(
-    id => {
+export const T4Table: React.FC<TableProps> = memo(
+  ({ openModal, handleModal, setDescriptionEdit, setIdEdit }: TableProps) => {
+    const [rows, setRows] = useState([{ id: 1, description: 'Carregando...' }]);
+    const [done, setDone] = useState(0);
+
+    const deleteTask = useCallback(
+      id => {
+        api
+          .delete(`/tasks/${id}`)
+          .then(() => setDone(done + 1))
+          .catch(() => console.log('erro'));
+      },
+      [done]
+    );
+
+    useEffect(() => {
       api
-        .delete(`/tasks/${id}`)
-        .then(() => setDone(done + 1))
-        .catch(() => console.log('erro'));
-    },
-    [done]
-  );
+        .get('/tasks')
+        .then(response => {
+          setRows(response?.data);
+        })
+        .catch(() => {
+          setRows([{ id: 1, description: 'Erro ao carregar dados' }]);
+        });
+    }, [done, openModal]);
 
-  useEffect(() => {
-    api
-      .get('/tasks')
-      .then(response => {
-        setRows(response?.data);
-      })
-      .catch(() => {
-        setRows([{ id: 1, description: 'Erro ao carregar dados' }]);
-      });
-  }, [done]);
-
-  return (
-    <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ width: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Done</TableCell>
-              <TableCell>Id</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Edit</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow
-                key={row.id}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <Checkbox onChange={() => deleteTask(row.id)} />
-                </TableCell>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.description}</TableCell>
-                <TableCell>
-                  <T4Button text="EDIT" onClick={() => {}} />
-                </TableCell>
+    return (
+      <div>
+        <TableContainer component={Paper}>
+          <Table sx={{ width: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Done</TableCell>
+                <TableCell>Id</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Edit</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-  );
-});
+            </TableHead>
+            <TableBody>
+              {rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    <Checkbox onChange={() => deleteTask(row.id)} />
+                  </TableCell>
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.description}</TableCell>
+                  <TableCell>
+                    <T4Button
+                      text="EDIT"
+                      onClick={() => {
+                        setIdEdit(row.id);
+                        setDescriptionEdit(row.description);
+                        handleModal();
+                      }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+    );
+  }
+);

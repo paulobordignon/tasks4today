@@ -4,10 +4,17 @@ import { T4Button, T4Modal, T4Table } from '../../components';
 
 export const TasksCrud: React.FC = memo(() => {
   const [open, setOpen] = useState(false);
+  const [idEdit, setIdEdit] = useState(0);
+  const [descriptionEdit, setDescriptionEdit] = useState('');
 
   const handleModal = useCallback(() => {
     setOpen(!open);
   }, [open]);
+
+  const addNewTask = useCallback(() => {
+    setDescriptionEdit('');
+    setIdEdit(0);
+  }, []);
 
   return (
     <div
@@ -20,9 +27,25 @@ export const TasksCrud: React.FC = memo(() => {
       }}
     >
       <h1>tasks4today</h1>
-      <T4Button onClick={() => handleModal()} text="ADD NEW TASK" />
-      <T4Table />
-      <T4Modal open={open} onClose={() => handleModal()} id={1} />
+      <T4Button
+        onClick={() => {
+          addNewTask();
+          handleModal();
+        }}
+        text="ADD NEW TASK"
+      />
+      <T4Table
+        openModal={open}
+        handleModal={() => handleModal()}
+        setDescriptionEdit={setDescriptionEdit}
+        setIdEdit={setIdEdit}
+      />
+      <T4Modal
+        open={open}
+        onClose={() => handleModal()}
+        idEdit={idEdit}
+        descriptionEdit={descriptionEdit}
+      />
     </div>
   );
 });
