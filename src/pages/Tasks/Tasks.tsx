@@ -7,14 +7,19 @@ export const TasksCrud: React.FC = memo(() => {
   const [idEdit, setIdEdit] = useState(0);
   const [descriptionEdit, setDescriptionEdit] = useState('');
 
-  const handleModal = useCallback(() => {
-    setOpen(!open);
-  }, [open]);
-
-  const addNewTask = useCallback(() => {
-    setDescriptionEdit('');
-    setIdEdit(0);
-  }, []);
+  const handleModal = useCallback(
+    (id?: number, description?: string) => {
+      if (id && description) {
+        setIdEdit(id);
+        setDescriptionEdit(description);
+      } else {
+        setIdEdit(0);
+        setDescriptionEdit('');
+      }
+      setOpen(!open);
+    },
+    [open]
+  );
 
   return (
     <div
@@ -27,19 +32,8 @@ export const TasksCrud: React.FC = memo(() => {
       }}
     >
       <h1>tasks4today</h1>
-      <T4Button
-        onClick={() => {
-          addNewTask();
-          handleModal();
-        }}
-        text="ADD NEW TASK"
-      />
-      <T4Table
-        openModal={open}
-        handleModal={() => handleModal()}
-        setDescriptionEdit={setDescriptionEdit}
-        setIdEdit={setIdEdit}
-      />
+      <T4Button onClick={() => handleModal()} text="ADD NEW TASK" />
+      <T4Table openModal={open} handleModal={handleModal} />
       <T4Modal
         open={open}
         onClose={() => handleModal()}

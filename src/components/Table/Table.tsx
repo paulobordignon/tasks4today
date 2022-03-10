@@ -15,7 +15,7 @@ import { T4Button } from '..';
 import { TableProps } from './types';
 
 export const T4Table: React.FC<TableProps> = memo(
-  ({ openModal, handleModal, setDescriptionEdit, setIdEdit }: TableProps) => {
+  ({ openModal, handleModal }: TableProps) => {
     const [rows, setRows] = useState([{ id: 1, description: 'Carregando...' }]);
     const [done, setDone] = useState(0);
 
@@ -66,11 +66,7 @@ export const T4Table: React.FC<TableProps> = memo(
                   <TableCell>
                     <T4Button
                       text="EDIT"
-                      onClick={() => {
-                        setIdEdit(row.id);
-                        setDescriptionEdit(row.description);
-                        handleModal();
-                      }}
+                      onClick={() => handleModal(row.id, row.description)}
                     />
                   </TableCell>
                 </TableRow>
