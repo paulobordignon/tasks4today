@@ -6,7 +6,11 @@ import { ButtonProps } from './types';
 export const T4Button: React.FC<ButtonProps> = memo(
   ({ onClick, text }: ButtonProps) => {
     return (
-      <Button variant="contained" onClick={onClick}>
+      <Button
+        variant="contained"
+        onClick={onClick}
+        data-testid="component_button"
+      >
         {text}
       </Button>
     );

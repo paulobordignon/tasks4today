@@ -44,7 +44,7 @@
         "no-shadow": "off",
         "no-console": "off",
         "no-useless-constructor": "off",
-        "no-empty-function": "off",
+        "no-empty-function": "on",
         "lines-between-class-members": "off",
         "import/extensions": [
         "error",
@@ -77,7 +77,7 @@
         "error",
             {
             "devDependencies": [
-                "**/*.spec.js"
+                "**/*.spec.tsx"
             ]
             }
         ],

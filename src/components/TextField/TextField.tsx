@@ -11,6 +11,7 @@ export const T4TextField: React.FC<TextFieldProps> = memo(
         label={label}
         onChange={onChange}
         value={value}
+        data-testid="component_textfield"
       />
     );
   }

@@ -1,24 +1,3 @@
 {
-  "tasks": [
-    {
-      "description": "1k1",
-      "id": 1
-    },
-    {
-      "description": "2222222ew",
-      "id": 2
-    },
-    {
-      "description": "44",
-      "id": 4
-    },
-    {
-      "description": "weded",
-      "id": 17
-    },
-    {
-      "description": "eee",
-      "id": 18
-    }
-  ]
+  "tasks": []
 }

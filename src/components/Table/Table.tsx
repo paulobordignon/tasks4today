@@ -41,7 +41,7 @@ export const T4Table: React.FC<TableProps> = memo(
     }, [done, openModal]);
 
     return (
-      <div>
+      <div data-testid="component_table">
         <TableContainer component={Paper}>
           <Table sx={{ width: 650 }} aria-label="simple table">
             <TableHead>
@@ -59,7 +59,7 @@ export const T4Table: React.FC<TableProps> = memo(
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">
-                    <Checkbox onChange={() => deleteTask(row.id)} />
+                    <Checkbox onChange={() => deleteTask(row.id)} data-testid='checkbox_removeTask' />
                   </TableCell>
                   <TableCell>{row.id}</TableCell>
                   <TableCell>{row.description}</TableCell>
